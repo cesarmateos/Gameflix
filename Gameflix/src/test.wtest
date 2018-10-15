@@ -1,0 +1,55 @@
+import principal.*
+
+describe "Test" {
+		var juego01 = new Violento("Mata Perros", "FPS", 20, false)
+		var juego02 = new MOBA("Reino Final", "Infantil", 40, false)
+		var juego03 = new Terrorifico("Una noche con Mirta", "Televisión", 0, true)
+		var juego04 = new Estrategico("Waterloo", "Históricos", 60, false)
+		var carlos = new Usuario(premium,300,50)
+		var pedro = new Usuario(base,20,90)
+		var mario = new Usuario(prueba,0,20)
+		var luis = new Usuario(infantil,0,100)
+		
+	fixture{
+		catalogo.agregar(juego01)
+		catalogo.agregar(juego02)
+		catalogo.agregar(juego03)
+		catalogo.agregar(juego04)
+	}
+
+	test "Carlos puede juga a un MOBA de $40 y gasta $30" {
+		carlos.juega(juego02)
+		assert.equals(270,carlos.dinero())
+	}
+	test "Mario no puede  juegar a un juego que no es demo" {
+		assert.throwsExceptionWithMessage("Usted no tiene permiso para jugar a este juego. Sea premium por $50 al mes", {mario.juega(juego04)})
+	}
+	test "Mario puede  juegar un demo terrofico y se pasa a suscripcion infantil" {
+		mario.juega(juego03)
+		assert.equals(infantil,mario.suscripcion())
+	}
+	test "Se le cobra a Pedro la suscripción,no tiene guita y pasa a prueba" {
+		pedro.cobrarSuscripcion()
+		assert.equals(prueba,pedro.suscripcion())
+	}
+	test "Pedro juega un violento y le baja el humor de 90 a 80" {
+		pedro.juega(juego01)
+		assert.equals(80,pedro.humor())
+	}
+	test "Carlos juega un estrategico y le sube el humor de 50 a 55" {
+		carlos.juega(juego04)
+		assert.equals(55,carlos.humor())
+	}
+	
+	test "Se busca un juego que existe" {
+		assert.equals(juego02, catalogo.buscar("Reino Final"))
+	}
+	test "Se filtra por categoría FPS y devuelve una lista con el juego01" {
+		assert.equals([juego01], catalogo.filtrarXCategoria("FPS"))
+	}
+	test "Un suscriptor infantil quiere jugar a un juego que no es infantil y recibe y error" {
+		assert.throwsExceptionWithMessage("Usted no tiene permiso para jugar a este juego. Sea premium por $50 al mes", {luis.juega(juego01)})
+	}
+	
+
+}
